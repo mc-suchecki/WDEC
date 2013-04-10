@@ -1,4 +1,4 @@
-package marketAdvisor;
+package pl.eiti.marketAdvisor.model;
 
 public class BusinessData {
 	private int productVolume;

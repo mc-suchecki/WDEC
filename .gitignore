@@ -1,6 +1,11 @@
+# binary files
 *.class
+/bin
 
-# Package Files #
+# package files
 *.jar
 *.war
 *.ear
+
+# other
+.metadata

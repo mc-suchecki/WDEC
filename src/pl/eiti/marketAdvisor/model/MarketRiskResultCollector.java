@@ -1,6 +1,7 @@
-package marketAdvisor;
+package pl.eiti.marketAdvisor.model;
 
 import java.util.ArrayList;
+
 
 
 public class MarketRiskResultCollector {

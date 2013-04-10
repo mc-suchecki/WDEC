@@ -1,4 +1,5 @@
-package marketAdvisor;
+package pl.eiti.marketAdvisor.model;
+
 
 public class BusinessDataRiskResultTranslator {
 	BusinessData getBussinesDataForChartPoint(RiskResult point){
