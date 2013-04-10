@@ -29,7 +29,7 @@ public class Controller implements Runnable {
     this.model = model;
     this.view = view;
     
-    //filling event map
+    //filling events-actions map
     eventActionMap = new HashMap<Class<? extends AppEvent>, AppAction>();
     fillEventActionMap();
   }
@@ -38,6 +38,7 @@ public class Controller implements Runnable {
    *  from the eventQueue and handling AppEvents found in it
    *  by executing AppAction associated with particular AppEvent. */
   public void run() {
+	view.showFrame();
     while(true) {
       try {
         AppEvent event = eventQueue.take();
