@@ -36,7 +36,7 @@ public class MarketAdvisorFrame extends JFrame {
     controlPanel.setLayout(new GridLayout(6, 2));
     add(BorderLayout.CENTER, controlPanel);
     
-    //creating labels and spinners					   init min max  step
+    //creating labels and spinners					            init min max  step
     controlPanel.add(new JLabel("Quantity:"));
     SpinnerModel quantityModel = new SpinnerNumberModel(100, 1, 1000, 1);
     JSpinner quantitySpinner = new JSpinner(quantityModel);

@@ -24,14 +24,14 @@ public class MarketAdvisor {
       //create and run controller thread
       final Thread controllerThread = new Thread() {
         public void run() {
-		  controller.run();
-	    }
-	  };
+		      controller.run();
+	      }
+	    };
       controllerThread.run();
 
-	} catch(Exception e) {
+	  } catch(Exception e) {
       e.printStackTrace();
       System.exit(1);
-	}
+	  }
   }
 }

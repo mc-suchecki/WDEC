@@ -14,7 +14,7 @@ import pl.eiti.marketAdvisor.view.View;
  * application events and determining what to do in particular situations.
  */
 public class Controller implements Runnable {
-  /** References to other classes */
+  /** References to other classes. */
   private final BlockingQueue<AppEvent> eventQueue;
   private final Model model;
   private final View view;

@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 import pl.eiti.marketAdvisor.common.events.AppEvent;
 
 public class View {
+  /** References to other classes. */
   private final BlockingQueue<AppEvent> eventQueue;
   private MarketAdvisorFrame frame;
   
