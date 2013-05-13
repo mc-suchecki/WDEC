@@ -3,7 +3,7 @@ WDEC
 
 System wspierający wspomaganie decyzji do użytku na laboratorium WDEC.
 
-System that supports decision making on a simulated market.
+System that supports the proces of decision making on a simulated market.
 It is a part of 'Decison support systems' cours.
 
 The program uses external library 'matlabcontrol',
