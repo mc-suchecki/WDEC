@@ -21,8 +21,8 @@ public class DecisionPointTranslator {
 	 * @param data Decision which user is willing to make.
 	 * @return Point on a chart associated with given decision.
 	 */
-	ChartPoint getChartPoint(DecisionParameters decision) {
+	/*ChartPoint getChartPoint(DecisionParameters decision) {
 		// TODO
 		return new ChartPoint(0, 0, false);
-	}
+	}*/
 }
