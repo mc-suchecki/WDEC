@@ -13,6 +13,17 @@ public class ChartPoint {
 	private final int magazineAdv;
 	private final int tvAdv;
 	
+	/** Default constructor */
+	public ChartPoint(){
+		this.result = 0;
+		this.riskValue = 0;
+		this.priceInPennies = 0;
+		this.quality = 0;
+		this.internetAdv = 0;
+		this.magazineAdv = 0;
+		this.tvAdv = 0;
+	}
+	
 	/** Constructor - initializes values. */
 	public ChartPoint(int result, double riskValue, double price, double quality, double internetAdv, double magazineAdv, double tvAdv){
 		this.result = result;

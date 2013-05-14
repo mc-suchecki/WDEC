@@ -1,88 +1,44 @@
 package pl.eiti.marketAdvisor.common;
 
-/**
- * @author Jakub Świątkowski
- * Data structure representing parameters defining decision in
- * the simulation. Contains also risk and revenue associated with
- * this decision to simplify communication and reduce calculations.
- */
 public class DecisionParameters {
-
-  private final int productVolume;
-  private final int productPrice;
-  private final int productQuality;
-  private final int internetAdvertising;
-  private final int magazineAdvertising;
-  private final int tvAdvertising;
-  private final double risk;
-  private final int revenue;
-
-  /** Constructor - initialises values. */
-  public DecisionParameters(int volume, int price, int quality, int internetAds,
-		  int magazineAds, int tvAds, double risk, int revenue) {
-    this.productVolume = volume;
-    this.productPrice = price;
-    this.productQuality = quality;
-    this.internetAdvertising = internetAds;
-    this.magazineAdvertising = magazineAds;
-    this.tvAdvertising = tvAds;
-    this.risk = risk;
-    this.revenue = revenue;
-  }
-  
-  /**
-	 * @return the productVolume
-	 */
-	public int getProductVolume() {
-		return productVolume;
+	private final int volume;
+	private final int priceInPennies;
+	private final int quality;
+	private final int internetAdv;
+	private final int magazineAdv;
+	private final int tvAdv;
+	
+	/** Constructor - initializes values. */
+	public DecisionParameters(int volume, double price, double quality, double internetAdv, double magazineAdv, double tvAdv){
+		this.volume = volume;
+		this.priceInPennies = (int)(price);
+		this.quality = (int)quality;
+		this.internetAdv = (int)internetAdv;
+		this.magazineAdv = (int)magazineAdv;
+		this.tvAdv = (int)tvAdv;
 	}
 
-	/**
-	 * @return the productPrice
-	 */
-	public int getProductPrice() {
-		return productPrice;
+	public int getVolume() {
+		return volume;
+	}
+	public int getPriceInPennies() {
+		return priceInPennies;
 	}
 
-	/**
-	 * @return the productQuality
-	 */
-	public int getProductQuality() {
-		return productQuality;
+	public int getQuality() {
+		return quality;
 	}
 
-	/**
-	 * @return the internetAdvertising
-	 */
-	public int getInternetAdvertising() {
-		return internetAdvertising;
+	public int getInternetAdv() {
+		return internetAdv;
 	}
 
-	/**
-	 * @return the magazineAdvertising
-	 */
-	public int getMagazineAdvertising() {
-		return magazineAdvertising;
+	public int getMagazineAdv() {
+		return magazineAdv;
 	}
 
-	/**
-	 * @return the tvAdvertising
-	 */
-	public int getTvAdvertising() {
-		return tvAdvertising;
+	public int getTvAdv() {
+		return tvAdv;
 	}
 
-	/**
-	 * @return the risk
-	 */
-	public double getRisk() {
-		return risk;
-	}
-
-	/**
-	 * @return the revenue
-	 */
-	public int getRevenue() {
-		return revenue;
-	}
 }

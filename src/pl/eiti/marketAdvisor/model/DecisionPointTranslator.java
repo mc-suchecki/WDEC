@@ -12,10 +12,10 @@ public class DecisionPointTranslator {
 	 * @param point Point which user is willing to achieve.
 	 * @return Decision parameters which result in given point.
 	 */
-	DecisionParameters getDecision(ChartPoint point) {
+	/*DecisionParameters getDecision(ChartPoint point) {
 		// TODO
 		return new DecisionParameters(0, 0, 0, 0, 0, 0, 0, 0);
-	}
+	}*/
 	
 	/**
 	 * @param data Decision which user is willing to make.

@@ -1,4 +1,4 @@
-function risk = minimize_risk(data)
+function risk = compute_risk(data)
 %The function computes combined risk of price risk, quality risk and
 %adveristement risk. It uses parameters returned by risk_approx method
 %[Input]:

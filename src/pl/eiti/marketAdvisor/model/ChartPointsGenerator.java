@@ -3,6 +3,7 @@ package pl.eiti.marketAdvisor.model;
 import matlabcontrol.*;
 import java.util.ArrayList;
 import pl.eiti.marketAdvisor.common.ChartPoint;
+import pl.eiti.marketAdvisor.common.DecisionParameters;
 
 /**
  * @author Jakub Swiatkowski
@@ -28,18 +29,17 @@ public class ChartPointsGenerator {
 	 * @param Volume of traded products.
 	 * @return List of points for drawing the chart.
 	 */
-	ArrayList<ChartPoint> getChartPoints(int volume) throws MatlabConnectionException, MatlabInvocationException{
+	
+	ArrayList<ChartPoint> getChartPoints(int volume, int pointsNumber) throws MatlabConnectionException, MatlabInvocationException{
 		
 		ArrayList<ChartPoint> chartPoints = new ArrayList<ChartPoint>();
 		
-		//Create a proxy, which we will use to control MATLAB
-	    MatlabProxyFactory factory = new MatlabProxyFactory();
-	    MatlabProxy proxy = factory.getProxy();
-
+		
 	    int nmbrOfReturnedVals = 3;
 	    String matlabCommand = "get_chart_points";	
-	    Object argument = volume;
+	    Object[] argument = {volume, pointsNumber};
 	    
+	    MatlabProxy proxy = MatlabProxySingleton.getInstance();
 	    Object[] returnedValues = proxy.returningFeval(matlabCommand, nmbrOfReturnedVals, argument);
 	    double[] riskVals = (double[])returnedValues[0];
 	    double[] results = (double[])returnedValues[1];
@@ -56,10 +56,31 @@ public class ChartPointsGenerator {
 		    ChartPoint point = new ChartPoint((int)results[i],riskVals[i],params[i],params[qualStartIndex+i],params[intAdvStartIndex+i],params[magAdvStartIndex+i],params[tvAdvStartIndex+i]);
 		    chartPoints.add(point);
 	    }
-	   
-	    //Disconnect the proxy from MATLAB
-	    proxy.disconnect();
-
 		return chartPoints;
 	}
+	
+	/**
+	  * The method computes the chart point for given decisions parameters
+	  * @param decision Desired parameters.
+	  * @return Point on chart associated with given parameters. 
+	  */
+	ChartPoint getChartPointForDecisions(DecisionParameters decision) throws MatlabConnectionException, MatlabInvocationException{
+		 
+		int nmbrOfReturnedVals = 2;
+		String matlabCommand = "compute_risk_and_result";	
+		double[] decisions = {decision.getPriceInPennies(),decision.getQuality(),decision.getInternetAdv(),decision.getMagazineAdv(),decision.getTvAdv(),decision.getVolume()}; 
+		Object[] argument = {decisions};
+		 
+		MatlabProxy proxy = MatlabProxySingleton.getInstance();
+		Object[] returnedValues = proxy.returningFeval(matlabCommand, nmbrOfReturnedVals, argument);
+		
+		double[] riskTab = (double []) returnedValues[0];
+		double[] resultTab = (double []) returnedValues[1];
+		
+		double risk = riskTab[0];
+		int result = (int)resultTab[0];
+		
+		return new ChartPoint(result,risk,decision.getPriceInPennies(),decision.getQuality(),decision.getInternetAdv(),decision.getMagazineAdv(),decision.getTvAdv());
+	}
+	
 }
