@@ -1,4 +1,4 @@
-function [riskvals, results, parameters] = get_chart_points(volume)
+function [riskvals, results, parameters] = get_chart_points(volume, number_of_points)
 % The function returns pars of risk values and results. This points are a 
 % result of minimazation of risk at a given result value.
 % The minimaztion is computed by fmincon method. This method uses nonlinear
@@ -13,10 +13,8 @@ function [riskvals, results, parameters] = get_chart_points(volume)
  
     lower_result_bound = 11.43*volume;
     upper_result_bound = 18.1*volume;
-    iteration_step = 0.5*volume;
-    
-    number_of_points =  int64((upper_result_bound - lower_result_bound)/iteration_step);
-    %TOADD Cast number_of_points to integer to avoid worning
+      
+    iteration_step =  (upper_result_bound - lower_result_bound)/number_of_points;
    
     results = zeros(number_of_points,1);
     riskvals = zeros(number_of_points,1);
@@ -29,7 +27,7 @@ function [riskvals, results, parameters] = get_chart_points(volume)
     
     i = 1;
     for result = lower_result_bound : iteration_step : upper_result_bound 
-        [par riskval] = fmincon(@minimize_risk,x0,[],[],[],[],lb,ub,...
+        [par riskval] = fmincon(@compute_risk,x0,[],[],[],[],lb,ub,...
             @(x)confuneq(x,volume,result),options);
         results(i) = result;
         riskvals(i) = riskval;
