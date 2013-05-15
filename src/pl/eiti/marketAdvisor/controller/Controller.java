@@ -1,10 +1,13 @@
 package pl.eiti.marketAdvisor.controller;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
+import pl.eiti.marketAdvisor.common.ChartPoint;
 import pl.eiti.marketAdvisor.common.events.AppEvent;
+import pl.eiti.marketAdvisor.common.events.CalculateButtonPressedEvent;
 import pl.eiti.marketAdvisor.model.Model;
 import pl.eiti.marketAdvisor.view.View;
 
@@ -53,6 +56,14 @@ public class Controller implements Runnable {
  
   /** Method responsible for filling eventActionMap container. */
   private void fillEventActionMap() {
+    //handling calculate button pressed event
+    eventActionMap.put(CalculateButtonPressedEvent.class, new AppAction() {
+      @Override public void execute(AppEvent e) {
+        CalculateButtonPressedEvent event = (CalculateButtonPressedEvent) e;
+        ArrayList<ChartPoint> pointsList = model.getChartPoints(event.getVolumeInDollars(), 10);
+        view.drawChart(pointsList);
+      }
+    });
     //TODO
   }
 }

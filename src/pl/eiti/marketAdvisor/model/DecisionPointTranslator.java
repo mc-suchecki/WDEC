@@ -1,7 +1,7 @@
 package pl.eiti.marketAdvisor.model;
 
-import pl.eiti.marketAdvisor.common.ChartPoint;
-import pl.eiti.marketAdvisor.common.DecisionParameters;
+//import pl.eiti.marketAdvisor.common.ChartPoint;
+//import pl.eiti.marketAdvisor.common.DecisionParameters;
 
 /**
  * @author Jakub Świątkowski

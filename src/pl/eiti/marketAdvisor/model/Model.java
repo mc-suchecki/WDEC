@@ -17,8 +17,8 @@ public class Model {
   public Model() {
     this.chartPointsGenerator = new ChartPointsGenerator();
     //getChartPoints(1000,25);
-    ChartPoint point = getChartPointForDecisions(new DecisionParameters(20000, 34, 75, 400, 0, 0));
-    System.out.println(point);
+    //ChartPoint point = getChartPointForDecisions(new DecisionParameters(20000, 34, 75, 400, 0, 0));
+    //System.out.println(point);
   }
   
   /**
@@ -26,7 +26,7 @@ public class Model {
    * particular input data (this means simulation state).
    * @return List of points for chart.
    */
-  ArrayList<ChartPoint> getChartPoints(int volumeInDollars, int pointsNumber) {
+  public ArrayList<ChartPoint> getChartPoints(int volumeInDollars, int pointsNumber) {
       try{
 		  return chartPointsGenerator.getChartPoints(volumeInDollars, pointsNumber);
 	  }
@@ -45,15 +45,15 @@ public class Model {
    * @param decision Desired parameters.
    * @return Point on chart associated with given parameters. 
    */
-  ChartPoint getChartPointForDecisions(DecisionParameters decisions) {
-	  try{
+  public ChartPoint getChartPointForDecisions(DecisionParameters decisions) {
+	  try {
 		 return chartPointsGenerator.getChartPointForDecisions(decisions);		 
 	  }
-	  catch( MatlabConnectionException e){
+	  catch(MatlabConnectionException e) {
 		  e.printStackTrace();
 		  return new ChartPoint();
 	  }
-	  catch( MatlabInvocationException e){
+	  catch(MatlabInvocationException e) {
 		  e.printStackTrace();
 		  return null;
 	  } 

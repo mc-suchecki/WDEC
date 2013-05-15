@@ -1,7 +1,9 @@
 package pl.eiti.marketAdvisor.view;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.SwingUtilities;
+import pl.eiti.marketAdvisor.common.ChartPoint;
 import pl.eiti.marketAdvisor.common.events.AppEvent;
 
 public class View {
@@ -17,12 +19,17 @@ public class View {
     this.eventQueue = blockingQueue;
   }
   
-  /** Method for showing main window of the game. */
+  /** Method for showing main window of the app. */
   public void showFrame() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override public void run() {
-        frame = new MarketAdvisorFrame();
+        frame = new MarketAdvisorFrame(eventQueue);
       }
     });
+  }
+  
+  /** Method for drawing the chart in app frame. */
+  public void drawChart(final ArrayList<ChartPoint> points) {
+    frame.drawChart(points);
   }
 }
