@@ -12,13 +12,12 @@ import pl.eiti.marketAdvisor.common.DecisionParameters;
 public class Model {
   /** References to other classes. */
   private final ChartPointsGenerator chartPointsGenerator;
-
+  private final DecisionPointTranslator decisionPointTranslator;
+  
   /** Model constructor - creates needed objects. */
   public Model() {
     this.chartPointsGenerator = new ChartPointsGenerator();
-    //getChartPoints(1000,25);
-    //ChartPoint point = getChartPointForDecisions(new DecisionParameters(20000, 34, 75, 400, 0, 0));
-    //System.out.println(point);
+    this.decisionPointTranslator = new DecisionPointTranslator();
   }
   
   /**
@@ -27,14 +26,16 @@ public class Model {
    * @return List of points for chart.
    */
   public ArrayList<ChartPoint> getChartPoints(int volumeInDollars, int pointsNumber) {
-      try{
-		  return chartPointsGenerator.getChartPoints(volumeInDollars, pointsNumber);
+    try {
+		  ArrayList<ChartPoint> chartPoints = chartPointsGenerator.getChartPoints(volumeInDollars, pointsNumber);
+		  decisionPointTranslator.setActiveChartPoints(chartPoints);
+		  return chartPoints;
 	  }
-	  catch( MatlabConnectionException e){
+	  catch(MatlabConnectionException e){
 		  e.printStackTrace();
 		  return new ArrayList<ChartPoint>();
 	  }
-	  catch( MatlabInvocationException e){
+	  catch(MatlabInvocationException e){
 		  e.printStackTrace();
 		  return new ArrayList<ChartPoint>();
 	  }  
@@ -45,13 +46,13 @@ public class Model {
    * @param decision Desired parameters.
    * @return Point on chart associated with given parameters. 
    */
-  public ChartPoint getChartPointForDecisions(DecisionParameters decisions) {
+  public ChartPoint getChartPointForDecisions(DecisionParameters decision) {
 	  try {
-		 return chartPointsGenerator.getChartPointForDecisions(decisions);		 
+	  	return decisionPointTranslator.getChartPoint(decision);		 
 	  }
 	  catch(MatlabConnectionException e) {
 		  e.printStackTrace();
-		  return new ChartPoint();
+		  return null;
 	  }
 	  catch(MatlabInvocationException e) {
 		  e.printStackTrace();
@@ -60,11 +61,12 @@ public class Model {
 }
   
   /**
-   * The method computes the chart point that satisfies constraints of desired decision.
+   * The method finds the chart point that is placed nearest the clicked point
+   * on the chart along with decision associated with it.
    * @param point Point selected by user on the chart.
    * @return Decision parameters that will result in given point (result and risk).
    */
-  /*DecisionParameters getDecisionForChartPoint(ChartPoint point) {
-  	return decisionPointTranslator.getDecision(point);
-  }*/
+  public DecisionParameters getDecisionForChartPoint(double x, double y) {
+  	return decisionPointTranslator.getDecision(x, y);
+  }
 }

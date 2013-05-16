@@ -11,6 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
@@ -32,8 +33,10 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
 import pl.eiti.marketAdvisor.common.ChartPoint;
+import pl.eiti.marketAdvisor.common.DecisionParameters;
 import pl.eiti.marketAdvisor.common.events.AppEvent;
 import pl.eiti.marketAdvisor.common.events.CalculateButtonPressedEvent;
+import pl.eiti.marketAdvisor.common.events.ChartPointClickedEvent;
 
 /**
  * @author Maciej 'mc' Suchecki
@@ -41,11 +44,20 @@ import pl.eiti.marketAdvisor.common.events.CalculateButtonPressedEvent;
  */
 public class MarketAdvisorFrame extends JFrame {
   private static final long serialVersionUID = 1L;
+  private int volumeSettingForLastPlot;
   private final JButton bottomButton;
   private final JLabel statusLabel;
   private final JFXPanel fxPanel;
   private final JTabbedPane tabbedPane;
   private final BlockingQueue<AppEvent> eventQueue;
+  
+  //spinners displaying decision parameters
+  private JSpinner quantitySpinner;
+  private JSpinner qualitySpinner;
+  private JSpinner priceSpinner;
+  private JSpinner tvAdsSpinner;
+  private JSpinner internetAdsSpinner;
+  private JSpinner newspaperAdsSpinner;
 
   /**
    * Main window constructor.
@@ -74,8 +86,8 @@ public class MarketAdvisorFrame extends JFrame {
     initialValuesPanel.setLayout(new BorderLayout());
     JPanel centerPanel = new JPanel();
     initialValuesPanel.add(BorderLayout.CENTER, centerPanel);
-    centerPanel.add(new JLabel("Volume:"));  //init min max  step
-    SpinnerModel volumeModel = new SpinnerNumberModel(100, 1, 1000, 1);
+    centerPanel.add(new JLabel("Volume:"));         //init min max  step
+    SpinnerModel volumeModel = new SpinnerNumberModel(100, 1, 100000, 1);
     final JSpinner volumeSpinner = new JSpinner(volumeModel);
     centerPanel.add(volumeSpinner);
 
@@ -93,27 +105,27 @@ public class MarketAdvisorFrame extends JFrame {
     chartPanel.add(BorderLayout.EAST, leftPanel);
     chartPanel.add(BorderLayout.WEST, fxPanel);
     decisionParamsPanel.setLayout(new GridLayout(6, 2));
-    decisionParamsPanel.add(new JLabel("Quantity:"));  //init min max  step
+    decisionParamsPanel.add(new JLabel("Quantity:")); //init min max  step
     SpinnerModel quantityModel = new SpinnerNumberModel(100, 1, 1000, 1);
-    JSpinner quantitySpinner = new JSpinner(quantityModel);
+    quantitySpinner = new JSpinner(quantityModel);
     decisionParamsPanel.add(quantitySpinner);
     decisionParamsPanel.add(new JLabel("Quality"));
     SpinnerModel qualityModel = new SpinnerNumberModel(50, 1, 100, 1);
-    JSpinner qualitySpinner = new JSpinner(qualityModel);
+    qualitySpinner = new JSpinner(qualityModel);
     decisionParamsPanel.add(qualitySpinner);
     decisionParamsPanel.add(new JLabel("Price:"));
     SpinnerModel priceModel = new SpinnerNumberModel(10, 1, 100, 1);
-    JSpinner priceSpinner = new JSpinner(priceModel);
+    priceSpinner = new JSpinner(priceModel);
     decisionParamsPanel.add(priceSpinner);
     SpinnerModel adsModel = new SpinnerNumberModel(0, 0, 100000, 1000);
     decisionParamsPanel.add(new JLabel("Television ads:"));
-    JSpinner tvAdsSpinner = new JSpinner(adsModel);
+    tvAdsSpinner = new JSpinner(adsModel);
     decisionParamsPanel.add(tvAdsSpinner);
     decisionParamsPanel.add(new JLabel("Internet ads:"));
-    JSpinner internetAdsSpinner = new JSpinner(adsModel);
+    internetAdsSpinner = new JSpinner(adsModel);
     decisionParamsPanel.add(internetAdsSpinner);
     decisionParamsPanel.add(new JLabel("Newspapers ads:"));
-    JSpinner newspaperAdsSpinner = new JSpinner(adsModel);
+    newspaperAdsSpinner = new JSpinner(adsModel);
     decisionParamsPanel.add(newspaperAdsSpinner);
 
     //creating bottom widgets
@@ -127,8 +139,8 @@ public class MarketAdvisorFrame extends JFrame {
     bottomButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         statusLabel.setText("Calculating...");
-        int desiredVolume = (int) volumeSpinner.getValue();
-        CalculateButtonPressedEvent event = new CalculateButtonPressedEvent(desiredVolume);
+        volumeSettingForLastPlot = (int) volumeSpinner.getValue();
+        CalculateButtonPressedEvent event = new CalculateButtonPressedEvent(volumeSettingForLastPlot);
         eventQueue.add(event);
       }
     });
@@ -151,43 +163,48 @@ public class MarketAdvisorFrame extends JFrame {
         Scene scene = new Scene(pane, 800, 600);
 
         //configuring the chart
-        NumberAxis yAxis = new NumberAxis(0.0, 1.0, 0.1);
-        NumberAxis xAxis = new NumberAxis(0.0, 1000.0, 100.0);
-        yAxis.setLabel("Risk");
-        xAxis.setLabel("Result");
-        ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
+        final NumberAxis xAxis = new NumberAxis(0.0, 1.0, 0.1);
+        final NumberAxis yAxis = new NumberAxis(11.43*volumeSettingForLastPlot, 18.1*volumeSettingForLastPlot, 100.0);
+        xAxis.setLabel("Risk");
+        yAxis.setLabel("Result");
+        final ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
         scatterChart.setTitle("Optimal risk/result pairs");
         scatterChart.setLegendVisible(false);
         Series<Number, Number> series = new XYChart.Series<>();
         series.setName("pairs");
 
-        //drawing recieved points
-        //for(ChartPoint point : points) {
-        //XYChart.Data<Number, Number> pointData = 
-        //new XYChart.Data<Number, Number>(point.getRiskValue(), point.getResult());
-        //series.getData().add(pointData);
-        //}
-
         //TODO remove this
-        XYChart.Data<Number, Number> samplePoint = new XYChart.Data<Number, Number>(100, 0.5);
-        series.getData().add(samplePoint);
+        //XYChart.Data<Number, Number> samplePoint = new XYChart.Data<Number, Number>(0.5, 1500);
+        //series.getData().add(samplePoint);
         
+        //drawing recieved points
+        for(ChartPoint point : points) {
+          XYChart.Data<Number, Number> pointData = 
+          new XYChart.Data<Number, Number>(point.getRiskValue(), point.getResult());
+          series.getData().add(pointData);
+        }
         scatterChart.getData().addAll(series);
         pane.setCenter(scatterChart);
 
+        //attaching mouse click handler and tooltip for every node
         for (XYChart.Series<Number, Number> s : scatterChart.getData()) {
           for (XYChart.Data<Number, Number> d : s.getData()) {
             Tooltip.install(d.getNode(), new Tooltip(
                 String.format("Result: %2.1f\nRisk: %2.1f%%", 
-                    d.getXValue().doubleValue(), 
-                    d.getYValue().doubleValue()*100)));
+                d.getYValue().doubleValue(),
+                d.getXValue().doubleValue()*100)));
 
             d.getNode().setOnMouseClicked(new EventHandler<MouseEvent>() {
               @Override
               public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                  //TODO fix this
-                  System.out.println("Selected data " + mouseEvent.getScreenX() + " " + mouseEvent.getScreenY() + "\n");
+                  Node chartPlotBackground = scatterChart.lookup(".chart-plot-background");
+                  double x = mouseEvent.getSceneX() - xSceneShift(chartPlotBackground);
+                  double y = mouseEvent.getSceneY() - ySceneShift(chartPlotBackground);    
+                  double xValue = (Double) xAxis.getValueForDisplay(x);
+                  double yValue = (Double) yAxis.getValueForDisplay(y);
+                  ChartPointClickedEvent event = new ChartPointClickedEvent(xValue, yValue);
+                  eventQueue.add(event);
                 }
               }
             });
@@ -204,5 +221,25 @@ public class MarketAdvisorFrame extends JFrame {
     tabbedPane.setEnabledAt(1, true);
     tabbedPane.setSelectedIndex(1);
   }
-
+  
+  /**
+   * @param decision
+   */
+  public void updateDecisionParameters(DecisionParameters decision) {
+    quantitySpinner.setValue(decision.getVolume());
+    qualitySpinner.setValue(decision.getQuality());
+    priceSpinner.setValue(decision.getPriceInPennies()/100);
+    tvAdsSpinner.setValue(decision.getTvAdv());
+    internetAdsSpinner.setValue(decision.getInternetAdv());
+    newspaperAdsSpinner.setValue(decision.getMagazineAdv());
+  }
+  
+  //recursive methods for calculating the coordinates of clicked point
+  private double xSceneShift(Node node) {
+    return node.getParent() == null ? 0 : node.getBoundsInParent().getMinX() + xSceneShift(node.getParent());
+  }
+  private double ySceneShift(Node node) {
+    return node.getParent() == null ? 0 : node.getBoundsInParent().getMinY() + ySceneShift(node.getParent());
+  }
+ 
 }

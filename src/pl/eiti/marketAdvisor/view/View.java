@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.SwingUtilities;
 import pl.eiti.marketAdvisor.common.ChartPoint;
+import pl.eiti.marketAdvisor.common.DecisionParameters;
 import pl.eiti.marketAdvisor.common.events.AppEvent;
 
 public class View {
@@ -31,5 +32,10 @@ public class View {
   /** Method for drawing the chart in app frame. */
   public void drawChart(final ArrayList<ChartPoint> points) {
     frame.drawChart(points);
+  }
+
+  /** Method for updating the values in app frame. */
+  public void updateDecisionParameters(DecisionParameters decision) {
+    frame.updateDecisionParameters(decision);
   }
 }

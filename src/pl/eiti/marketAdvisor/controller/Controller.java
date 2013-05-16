@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 import pl.eiti.marketAdvisor.common.ChartPoint;
+import pl.eiti.marketAdvisor.common.DecisionParameters;
 import pl.eiti.marketAdvisor.common.events.AppEvent;
 import pl.eiti.marketAdvisor.common.events.CalculateButtonPressedEvent;
+import pl.eiti.marketAdvisor.common.events.ChartPointClickedEvent;
 import pl.eiti.marketAdvisor.model.Model;
 import pl.eiti.marketAdvisor.view.View;
 
@@ -64,6 +66,16 @@ public class Controller implements Runnable {
         view.drawChart(pointsList);
       }
     });
+    
+    //handling chart point clicked event
+    eventActionMap.put(ChartPointClickedEvent.class, new AppAction() {
+      @Override public void execute(AppEvent e) {
+        ChartPointClickedEvent event = (ChartPointClickedEvent) e;
+        DecisionParameters decision = model.getDecisionForChartPoint(event.getXCoordinateOfPoint(), event.getYCoordinateOfPoint());
+        view.updateDecisionParameters(decision);
+      }
+    });
+ 
     //TODO
   }
 }
